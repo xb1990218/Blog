@@ -1,0 +1,11 @@
+F:\搭建新平台中\Blog\BlogWeb\bin\Debug\netcoreapp2.0\BlogWeb.deps.json
+F:\搭建新平台中\Blog\BlogWeb\bin\Debug\netcoreapp2.0\BlogWeb.runtimeconfig.json
+F:\搭建新平台中\Blog\BlogWeb\bin\Debug\netcoreapp2.0\BlogWeb.runtimeconfig.dev.json
+F:\搭建新平台中\Blog\BlogWeb\bin\Debug\netcoreapp2.0\BlogWeb.dll
+F:\搭建新平台中\Blog\BlogWeb\obj\Debug\netcoreapp2.0\BlogWeb.csproj.CoreCompileInputs.cache
+F:\搭建新平台中\Blog\BlogWeb\obj\Debug\netcoreapp2.0\BlogWeb.AssemblyInfoInputs.cache
+F:\搭建新平台中\Blog\BlogWeb\obj\Debug\netcoreapp2.0\BlogWeb.AssemblyInfo.cs
+F:\搭建新平台中\Blog\BlogWeb\bin\Debug\netcoreapp2.0\BlogWeb.pdb
+F:\搭建新平台中\Blog\BlogWeb\obj\Debug\netcoreapp2.0\BlogWeb.dll
+F:\搭建新平台中\Blog\BlogWeb\obj\Debug\netcoreapp2.0\BlogWeb.pdb
+F:\搭建新平台中\Blog\BlogWeb\obj\Debug\netcoreapp2.0\BlogWeb.csprojAssemblyReference.cache

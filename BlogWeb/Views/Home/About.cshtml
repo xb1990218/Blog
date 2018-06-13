@@ -1,0 +1,52 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Easyui表单方式2</title>
+    <link href="~/lib/jquery-easyui-1.5.5.1/themes/default/easyui.css" rel="stylesheet" />
+    <link href="~/lib/jquery-easyui-1.5.5.1/themes/icon.css" rel="stylesheet" />
+    <script src="~/lib/jquery-easyui-1.5.5.1/jquery.min.js"></script>
+    <script src="~/lib/jquery-easyui-1.5.5.1/jquery.easyui.min.js"></script>
+    <script src="~/lib/jquery-easyui-1.5.5.1/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript">
+        $(function () { 
+            $('#dg').datagrid({
+                url: '/Home/GetList',
+                columns: [[
+                    { field: 'title', title: '标题', width: 100 },
+                    { field: 'body', title: '内容', width: 100 },
+                    { field: 'visitNum', title: '访问量', width: 100, align: 'right' },
+                    { field: 'caName', title: '分类名', width: 100 },
+                    { field: 'caBh', title: '分类编号', width: 100 },
+                    { field: 'remark', title: '备注', width: 100 }
+                ]],
+                loadMsg: '正在加载数据，请稍后',
+                rownumbers: true,
+                singleSelect: true,
+                pagination: true,
+                pageNumber: 1,
+                pageSize: 10,
+                pageList: [10, 20, 30, 40, 50],
+                sortName:'visitNum',
+                striped: true,
+                toolbar: [{
+                    iconCls: 'icon-edit',
+                    handler: function () { alert('edit') }
+                }, '-', {
+                    iconCls: 'icon-help',
+                    handler: function () { alert('help') }
+                }]
+            });
+        })
+    </script>
+</head>
+<body>
+    <table id="dg"></table>
+</body>
+</html>

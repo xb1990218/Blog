@@ -1,0 +1,197 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>博客文章列表</title>
+    <link href="~/lib/jquery-easyui-1.5.5.1/themes/default/easyui.css" rel="stylesheet" />
+    <link href="~/lib/jquery-easyui-1.5.5.1/themes/icon.css" rel="stylesheet" />
+    <script src="~/lib/jquery-easyui-1.5.5.1/jquery.min.js"></script>
+    <script src="~/lib/jquery-easyui-1.5.5.1/jquery.easyui.min.js"></script>
+    <script src="~/lib/jquery-easyui-1.5.5.1/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#addDiv").dialog('close');//一来的时候让新增和编辑窗口不显示
+            $("#editDiv").dialog('close');
+            //表格初始化
+            $('#tt').datagrid({
+                url: '/Home/GetList', //从哪个地方获取表格数据,返回必须是这种格式的数据：{total:110,rows:[这里是个json集合]}
+                title: '文章列表',//表格顶部标题
+                width: 1250,
+                height: 460,
+                fitColumns: true, //自适应
+                idField: 'id', //主键列
+                loadMsg: '正在加载文章的信息...', //后台加载数据时候显示的消息
+                pagination: true, //是否支持分页
+                singleSelect: false, //单行选择
+                pageSize: 10, //一页有多少条
+                pageNumber: 1, //默认的当前页
+                pageList: [10, 20, 30], //可以进行设置一页有多少条
+                queryParams: {}, //当请求URL时的参数(这里为空)，例如 {name:'小明',age:17}
+                columns: [
+                    [
+                        { field: 'ck', checkbox: true, align: 'left', width: 50 }, //复选框
+                        { field: 'id', title: '编号', width: 100 },
+                        { field: 'title', title: '标题', width: 150 },
+                        { field: 'body', title: '内容', width: 500 },
+                        { field: 'visitNum', title: '访问量', width: 100, align: 'right' },
+                        { field: 'caBh', title: '分类编号', width: 100 },
+                        { field: 'caName', title: '分类名', width: 100 },
+                        { field: 'remark', title: '备注', width: 100 }
+                    ]
+                ],
+                toolbar: [ //这里是定义菜单栏的
+                    {
+                        id: 'btnAdd',
+                        text: '添加',
+                        iconCls: 'icon-add',
+                        handler: function() {
+                            $("#addDiv").dialog('open');
+                        }
+                    },
+                    {
+                        id: 'btnEdit',
+                        text: '编辑',
+                        iconCls: 'icon-edit',
+                        handler: function () {
+                            var row = $("#tt").datagrid('getSelections');//获取选择的行数
+                            if (row.length!=1) {
+                                $.messager.alert("提示", "请选择一行要修改的数据", "error");
+                                return;
+                            }
+                            $("#editId").val(row[0].id);
+                            $("#editTitle").val(row[0].title);
+                            $("#editBody").textbox("setValue", row[0].body);//这里引用了easyui的控件 导致按照上面方式不能赋值，查了官方可以这样设置值
+                            $("#editVistNum").val(row[0].visitNum);
+                            $("#editCabh").val(row[0].caBh);
+                            $("#editRemark").val(row[0].remark);
+                            $("#editDiv").dialog('open');
+                        }
+                    },
+                    {
+                        id: 'btnDelete',
+                        text: '删除',
+                        iconCls: 'icon-remove',
+                        handler: function () {
+                            var rows = $("#tt").datagrid('getSelections');
+                            if (rows.length >= 1) {
+                                var count = rows.length;
+                                $.messager.confirm('提示框', '你选中了' + count + '条数据，确定要删除吗？', function (data) {
+                                    if (data) {//点了确定
+                                        var str = "";
+                                        for (var i = 0; i < rows.length; i++) {//遍历取出每行数据的id传到后台去删除
+                                            str = str + "|" + rows[i].id;
+                                        }
+                                        $.ajax({
+                                            url: "/Home/DelList?ids="+str,
+                                            type: "get",
+                                            success: function (data) {
+                                                if (data=="ok") {
+                                                    $.messager.alert("提示", "删除成功！");
+                                                } else {
+                                                    $.messager.alert("提示", "删除失败！","error");
+                                                }
+                                                $('#tt').datagrid('reload');//刷新数据
+                                                $("#tt").datagrid('clearChecked');//清除所有选中的
+                                            }
+                                        });
+                                    } else {//点了取消
+                                        return;
+                                    }
+                                    
+                                });
+                            } else {
+                                $.messager.alert("提示","当前没有选中任何数据", "error");
+                                return;
+                            }
+                            
+                        }
+                    }
+                ]
+            });
+
+            //获取该表格的分页控件
+            var p = $('#tt').datagrid('getPager'); 
+            //设置分页属性 在此可以自定义分页控件上的文字信息等
+            $(p).pagination({ 
+                pageSize: 10,//每页显示的记录条数，默认为10 
+                pageList: [10,20,30,50],//可以设置每页记录条数的列表 
+                beforePageText: '第',//页数文本框前显示的汉字 
+                afterPageText: '页    共 {pages} 页', 
+                displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录', 
+                showRefresh: false //设置是否显示刷新按钮 就是那个小圆圈
+            });
+
+
+            //添加表单异步提交
+            $("#addBlog").form({
+                success: function(data) {
+                    if (data == "ok") {
+                        
+                        $("#addDiv").dialog('close');//关闭窗口
+                        $('#tt').datagrid('reload');//刷新数据
+                        $("#tt").datagrid('clearChecked');//清楚所有选中的
+                    } else {
+                        alert("添加失败，请重试！");
+                    }
+                }
+            });
+
+            //编辑表单异步提交
+            $("#editBlog").form({
+                success: function (data) {
+                    if (data == "ok") {
+                        $("#editDiv").dialog('close');//关闭窗口
+                        $('#tt').datagrid('reload');//刷新数据
+                        $("#tt").datagrid('clearChecked');//清楚所有选中的
+                    } else {
+                        $.messager.alert("提示", "修改失败，请重试！", "error");
+                    }
+                }
+            });
+        });
+
+    </script>
+</head>
+<body>
+<div>
+    <table id="tt"></table>
+</div>
+
+    <!--新增-->
+<div id="addDiv" class="easyui-dialog" title="新增文章" resizable="true" style="width: auto; height: auto; padding: 10px;">
+    <form id="addBlog" action="/Home/Add" method="post">
+        <table>
+            <tr><td>标题:</td><td><input type="text" name="Title" /></td></tr>
+            <tr><td>内容:</td><td><input class="easyui-textbox" name="Body" data-options="multiline:true" style="width: 500px; height: 250px;" /></td></tr>
+            <tr><td>访问量:</td><td><input type="text" name="VisitNum" /></td></tr>
+            <tr><td>分类编号:</td><td><input type="text" name="CaBh" /></td></tr>
+            <tr><td>备注:</td><td><input type="text" name="Remark" /></td></tr>
+            <tr><td colspan="2"><input type="submit" value="添加" /></td></tr>
+        </table>
+        
+    </form>
+</div>
+    
+<!--编辑-->
+<div id="editDiv" class="easyui-dialog" title="编辑文章" resizable="true" style="width: auto; height: auto; padding: 10px;">
+    <form id="editBlog" action="/Home/Edit" method="post">
+        <table>
+            <tr><td>编号:</td><td><input type="text" id="editId" name="Id" readonly="readonly"/></td></tr>
+            <tr><td>标题:</td><td><input type="text" id="editTitle" name="Title" /></td></tr>
+            <tr><td>内容:</td><td><input id="editBody" class="easyui-textbox" name="Body" data-options="multiline:true" style="width: 500px; height: 250px;" /></td></tr>
+            <tr><td>访问量:</td><td><input id="editVistNum" type="text" name="VisitNum" /></td></tr>
+            <tr><td>分类编号:</td><td><input id="editCabh" type="text" name="CaBh" /></td></tr>
+            <tr><td>备注:</td><td><input id="editRemark" type="text" name="Remark" /></td></tr>
+            <tr><td colspan="2"><input type="submit" value="保存" /></td></tr>
+        </table>
+
+    </form>
+</div>
+
+</body>
+</html>
